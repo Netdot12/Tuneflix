@@ -1,17 +1,15 @@
 const express = require('express');
 const app = express();
 
-// Set up middleware, routes, etc.
-app.use(express.json());
-app.use(express.static('public')); // Adjust as needed
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
 
+// Default route to send index.html
 app.get('/', (req, res) => {
-    res.send('Hello from Vercel!');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
-// Use the environment variable for port
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
