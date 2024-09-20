@@ -7,12 +7,45 @@
 </head>
 <body>
     <h1>Send Notification</h1>
-    <form id="notificationForm" action="/send-notification" method="POST">
+    <form id="notificationForm">
         <label for="title">Notification Title:</label>
         <input type="text" id="title" name="title" required><br><br>
         <label for="body">Notification Body:</label>
         <textarea id="body" name="body" required></textarea><br><br>
         <button type="submit">Send Notification</button>
     </form>
+
+    <p id="status"></p>
+
+    <script>
+        document.getElementById('notificationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+
+            // Get form values
+            const title = document.getElementById('title').value;
+            const body = document.getElementById('body').value;
+
+            // Send POST request using fetch
+            fetch('/send-notification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, body })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display success or error message
+                if (data.success) {
+                    document.getElementById('status').textContent = 'Notification sent successfully!';
+                } else {
+                    document.getElementById('status').textContent = 'Error sending notification.';
+                }
+            })
+            .catch(error => {
+                document.getElementById('status').textContent = 'An error occurred: ' + error;
+            });
+        });
+    </script>
 </body>
 </html>
