@@ -43,7 +43,7 @@ app.post('/send-notification', (req, res) => {
                 link: 'https://google.com'
             }
         },
-        token: 'dvA3ilo4fM4RMQCuK_ODcc:APA91bGrEqgQ1pI6n_9izYBaoaUQIPnyEeMf6SYkADdAaLNJhOWOHi4qtr2PwhYSjWG_N6cGpfbrcATH2Uz_u6SOi-Hqwp8YQG_WdICbqaGwqk6nFyVu-mx3lTDI5LYwhT35u5iOdvfS' // Replace with the appropriate token
+        token: 'fZYw-EGjLyWw7S2NMuRN8D:APA91bEIkRreHMobdgcebGm1bGNgeX8UAfiHh0v52UEJTNYf_hFlACU40-yHCR5ry_LzpIFt3X6_f7q2-4Xh6J33EnIGf3lpQFoJAjS1bDaAEO85iMYlVem2tWkWqb1MI9g3p11L94f7' // Replace with the appropriate token
     };
 
     // Send the notification using Firebase Admin SDK
