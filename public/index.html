@@ -18,32 +18,33 @@
     <p id="status"></p>
 
     <script>
+        // JavaScript to handle form submission asynchronously
         document.getElementById('notificationForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form from submitting normally
+            event.preventDefault(); // Prevent the default form submission
 
-            // Get form values
+            // Get the form data
             const title = document.getElementById('title').value;
             const body = document.getElementById('body').value;
 
-            // Send POST request using fetch
+            // Send the form data using fetch API
             fetch('/send-notification', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ title, body })
+                body: JSON.stringify({ title, body }) // Convert the data to JSON
             })
             .then(response => response.json())
             .then(data => {
-                // Display success or error message
                 if (data.success) {
-                    document.getElementById('status').textContent = 'Notification sent successfully!';
+                    document.getElementById('status').innerText = 'Notification sent successfully!';
                 } else {
-                    document.getElementById('status').textContent = 'Error sending notification.';
+                    document.getElementById('status').innerText = 'Error sending notification!';
                 }
             })
             .catch(error => {
-                document.getElementById('status').textContent = 'An error occurred: ' + error;
+                document.getElementById('status').innerText = 'Error sending notification!';
+                console.error('Error:', error);
             });
         });
     </script>
