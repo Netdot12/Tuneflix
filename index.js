@@ -25,8 +25,8 @@ admin.initializeApp({
 // Define the notification message
 const message = {
     notification: {
-        title: 'Nchebe is dead',
-        body: 'That is true',
+        title: 'Notification title',
+        body: 'Notification body',
         image: 'https://cdn.shopify.com/s/files/1/1061/1924/files/Eye_Roll_Emoji_large.png?v=1541768914'
     },
     webpush: {
