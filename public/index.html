@@ -6,7 +6,7 @@
     <title>Send Notification</title>
 </head>
 <body>
-    <h1>Send Notification</h1>
+    <h1>Send Notificatiggfon</h1>
     <form id="notificationForm">
         <label for="title">Notification Title:</label>
         <input type="text" id="title" name="title" required><br><br>
@@ -18,35 +18,39 @@
     <p id="status"></p>
 
     <script>
-        // JavaScript to handle form submission asynchronously
-        document.getElementById('notificationForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+    // JavaScript to handle form submission asynchronously
+    document.getElementById('notificationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        console.log('Form submission prevented'); // Debugging log
 
-            // Get the form data
-            const title = document.getElementById('title').value;
-            const body = document.getElementById('body').value;
+        // Get the form data
+        const title = document.getElementById('title').value;
+        const body = document.getElementById('body').value;
+        console.log('Title:', title, 'Body:', body); // Debugging log
 
-            // Send the form data using fetch API
-            fetch('/send-notification', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title, body }) // Convert the data to JSON
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('status').innerText = 'Notification sent successfully!';
-                } else {
-                    document.getElementById('status').innerText = 'Error sending notification!';
-                }
-            })
-            .catch(error => {
+        // Send the form data using fetch API
+        fetch('/send-notification', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, body }) // Convert the data to JSON
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Notification sent successfully'); // Debugging log
+                document.getElementById('status').innerText = 'Notification sent successfully!';
+            } else {
+                console.log('Error sending notification'); // Debugging log
                 document.getElementById('status').innerText = 'Error sending notification!';
-                console.error('Error:', error);
-            });
+            }
+        })
+        .catch(error => {
+            console.log('Error:', error); // Debugging log
+            document.getElementById('status').innerText = 'Error sending notification!';
         });
-    </script>
+    });
+</script>
 </body>
 </html>
