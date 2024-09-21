@@ -19,3 +19,4 @@ self.addEventListener("notificationclick", (event) => {
     event.waitUntil(clients.openWindow(event.notification.data.url));
 
 });
+
