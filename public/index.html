@@ -1,60 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FCM</title>
-<link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
     <h1>Firebase Push Notification</h1>
+    
     <script type="module">
-        // Import the functions you need from the SDKs you need
+        // Import the functions from Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
         import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-messaging.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
 
-        
-  const firebaseConfig = {
-  apiKey: "AIzaSyBTHkdgYk91fKYFDIxTSzurdvf7SBaEYHQ",
-  authDomain: "tuneflix-ea9b8.firebaseapp.com",
-  projectId: "tuneflix-ea9b8",
-  storageBucket: "tuneflix-ea9b8.appspot.com",
-  messagingSenderId: "874689628328",
-  appId: "1:874689628328:web:6d1d7c1e49135d9ce75a9d",
-  measurementId: "G-6KZMFGDRBS"
-};
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTHkdgYk91fKYFDIxTSzurdvf7SBaEYHQ",
+            authDomain: "tuneflix-ea9b8.firebaseapp.com",
+            projectId: "tuneflix-ea9b8",
+            storageBucket: "tuneflix-ea9b8.appspot.com",
+            messagingSenderId: "874689628328",
+            appId: "1:874689628328:web:6d1d7c1e49135d9ce75a9d",
+            measurementId: "G-6KZMFGDRBS"
+        };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const messaging = getMessaging(app);
 
-        navigator.serviceWorker.register("sw.js").then(registration => {
+        // Service worker code as a string
+        const swCode = `
+            self.addEventListener("push", (event) => {
+                const notif = event.data.json().notification;
+                event.waitUntil(
+                    self.registration.showNotification(notif.title, {
+                        body: notif.body,
+                        icon: notif.image,
+                        data: {
+                            url: notif.click_action
+                        }
+                    })
+                );
+            });
+
+            self.addEventListener("notificationclick", (event) => {
+                event.waitUntil(
+                    clients.openWindow(event.notification.data.url)
+                );
+            });
+        `;
+
+        // Convert the service worker string to a blob and then to a URL
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+
+        // Register the service worker from the blob URL
+        navigator.serviceWorker.register(swUrl).then(registration => {
+            // Get the Firebase messaging token
             getToken(messaging, {
                 serviceWorkerRegistration: registration,
-                vapidKey: 'BEEK__iLM1F8o_nA4uonVgIYZBL4Q3ypBevE_AvBxny47cH8Ow_iRlqrYutUUWaFb_0jK0tTE05CR__9DEO1Hqk' }).then((currentToken) => {
+                vapidKey: 'BEEK__iLM1F8o_nA4uonVgIYZBL4Q3ypBevE_AvBxny47cH8Ow_iRlqrYutUUWaFb_0jK0tTE05CR__9DEO1Hqk'
+            }).then((currentToken) => {
                 if (currentToken) {
-                  
-                    console.log("Token is: "+currentToken);
-                    // Send the token to your server and update the UI if necessary
-                    // ...
+                    console.log("Token is: " + currentToken);
+                    // Send the token to your server if needed
                 } else {
-                    // Show permission request UI
                     console.log('No registration token available. Request permission to generate one.');
-                    // ...
                 }
             }).catch((err) => {
-                console.log('An error occurred while retrieving token. ', err);
-                // ...
+                console.log('Error while retrieving token. ', err);
             });
+        }).catch((err) => {
+            console.log('Service Worker registration failed: ', err);
         });
-
-
 
     </script>
 </body>
-
 </html>
