@@ -3,18 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCM</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Send Notification</title>
 </head>
 <body>
-    <h1>Firebase Push Notification</h1>
-    
+    <h1>Send Firebase Notification</h1>
+    <a href="tru.html">Sf</a>
+    <form id="notificationForm">
+        <label for="title">Notification Title:</label>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="body">Notification Body:</label>
+        <input type="text" id="body" name="body" required><br><br>
+
+        <input type="hidden" id="token" name="token"><!-- Hidden field for Firebase token -->
+
+        <button type="submit">Send Notification</button>
+    </form>
+
     <script type="module">
-        // Import the functions from Firebase SDKs
+        // Firebase SDKs and logic to get the token
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
         import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-messaging.js";
 
-        // Firebase configuration
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyBTHkdgYk91fKYFDIxTSzurdvf7SBaEYHQ",
             authDomain: "tuneflix-ea9b8.firebaseapp.com",
@@ -29,52 +40,48 @@
         const app = initializeApp(firebaseConfig);
         const messaging = getMessaging(app);
 
-        // Service worker code as a string
-        const swCode = `
-            self.addEventListener("push", (event) => {
-                const notif = event.data.json().notification;
-                event.waitUntil(
-                    self.registration.showNotification(notif.title, {
-                        body: notif.body,
-                        icon: notif.image,
-                        data: {
-                            url: notif.click_action
-                        }
-                    })
-                );
-            });
-
-            self.addEventListener("notificationclick", (event) => {
-                event.waitUntil(
-                    clients.openWindow(event.notification.data.url)
-                );
-            });
-        `;
-
-        // Convert the service worker string to a blob and then to a URL
-        const swBlob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(swBlob);
-
-        // Register the service worker from the blob URL
-        navigator.serviceWorker.register(swUrl).then(registration => {
-            // Get the Firebase messaging token
+        // Get Firebase token and set it to the hidden input field
+        navigator.serviceWorker.register("sw.js").then(registration => {
             getToken(messaging, {
                 serviceWorkerRegistration: registration,
                 vapidKey: 'BEEK__iLM1F8o_nA4uonVgIYZBL4Q3ypBevE_AvBxny47cH8Ow_iRlqrYutUUWaFb_0jK0tTE05CR__9DEO1Hqk'
             }).then((currentToken) => {
                 if (currentToken) {
-                    console.log("Token is: " + currentToken);
-                    // Send the token to your server if needed
+                    document.getElementById('token').value = currentToken; // Set the token to hidden input
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
                 }
             }).catch((err) => {
-                console.log('Error while retrieving token. ', err);
+                console.log('An error occurred while retrieving token. ', err);
             });
-        }).catch((err) => {
-            console.log('Service Worker registration failed: ', err);
         });
 
+        // Handle form submission
+        document.getElementById('notificationForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent form from submitting the traditional way
+
+            const title = document.getElementById('title').value;
+            const body = document.getElementById('body').value;
+            const token = document.getElementById('token').value;
+
+            // Send the data to the server
+            fetch('/send-notification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, body, token })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Notification sent successfully!');
+                } else {
+                    alert('Error sending notification.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
     </script>
 </body>
 </html>
